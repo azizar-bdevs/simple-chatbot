@@ -1,0 +1,6 @@
+langgraph
+python-dotenv
+pydantic
+langchain_core
+langchain-openrouter
+langgraph_prebuilt
