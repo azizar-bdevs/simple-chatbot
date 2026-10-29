@@ -124,6 +124,7 @@ builder.add_edge("waiting_node", END)
 
 workflow = builder.compile(checkpointer=checkpointer)
 
+print(workflow.get_graph().draw_mermaid())
 
 # --------------------------------------------------
 # 8. Interactive terminal chat
@@ -154,7 +155,9 @@ def main():
             continue
 
         try:
-            result = workflow.invoke(
+            print("\nAI: ", end="", flush=True)
+
+            for message_chunk, metadata in workflow.stream(
                 {
                     "messages": [
                         HumanMessage(content=user_input)
@@ -162,10 +165,13 @@ def main():
                     "status": "running",
                 },
                 config=config,
-            )
+                stream_mode="messages",
+            ):
+                # Only print actual text chunks
+                if message_chunk.content:
+                        print(message_chunk.content, end="", flush=True)
 
-            print(f"\nAI: {result['messages'][-1].content}\n")
-            print(f"[GRAPH] Final status: {result['status']}\n")
+                print("\n")
 
         except Exception as error:
             print(f"\n[GRAPH ERROR] {type(error).__name__}: {error}")
